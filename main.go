@@ -18,7 +18,7 @@ import (
 var (
 	server      *gin.Engine
 	userservice services.UserService
-	authService services.AuthService
+	// authService services.
 	// controller     controllers.UserController
 	ctx            context.Context
 	userCollection *mongo.Collection
@@ -50,19 +50,15 @@ func init() {
 	log.Println("MongoDB connection Established")
 
 	userCollection = mongoConnect.Database("go-rest-api").Collection("users")
-	userservice = services.NewUserService(userCollection, ctx)
-	// authService = services.AuthService(userservice)
-	authController = controller.New(userservice)
-
+    services.NewUserService(userCollection, ctx)
 	server = gin.Default()
 
 }
 func main() {
 	defer mongoConnect.Disconnect(ctx)
-	routes := routes.LocalAuthController{controller.AuthController{}}
 
 	basePath := server.Group("/api/v1")
-	routes.RegisterUserRoutes(basePath)
+	routes.AuthRouts(basePath)
 
 	log.Fatal(server.Run(":3010"))
 

@@ -19,16 +19,13 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-func New(userService services.UserService) AuthController {
+var userService services.UserService
 
-	return AuthController{UserService: userService}
-}
-
-func (c *AuthController) Login(ctx *gin.Context) {
+func Login(ctx *gin.Context) {
 	var request LoginRequest
 	ctx.ShouldBindJSON(&request)
 
-	user, err := c.UserService.GetByEmail(request.Username)
+	user, err := userService.GetByUsername(request.Username)
 	if err != nil {
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -52,14 +49,14 @@ func (c *AuthController) Login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"token": tokenString})
 }
 
-func (c *AuthController) Register(ctx *gin.Context) {
+func Register(ctx *gin.Context) {
 	var user models.UserModel
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
 
-	user, err := c.UserService.GetByEmail(user.Username)
+	user, err := userService.GetByUsername(user.Username)
 	if err != nil {
 		ctx.JSON(http.StatusConflict, gin.H{"error": "Username Unavailable"})
 		return
@@ -78,7 +75,7 @@ func (c *AuthController) Register(ctx *gin.Context) {
 		return
 	}
 	user.Password = hashedPassword
-	c.UserService.Create(user)
+	userService.Create(user)
 	ctx.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
 
 }

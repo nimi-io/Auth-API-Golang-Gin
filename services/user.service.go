@@ -12,7 +12,7 @@ type UserService interface {
 	GetById(id string) models.UserModel
 	Create(user models.UserModel) models.UserModel
 	Update(id string, user models.UserModel) models.UserModel
-	GetByEmail(email string) (models.UserModel,error)
+	GetByUsername(username string) (models.UserModel,error)
 	// Delete(id string) models.UserModel
 }
 
@@ -62,8 +62,8 @@ func (s *UserServiceImplementation) Update(id string, user models.UserModel) mod
 	return user
 }
 
-func (s *UserServiceImplementation) GetByEmail(Username string) (models.UserModel,error) {
+func (s *UserServiceImplementation) GetByUsername(username string) (models.UserModel,error) {
 	var user models.UserModel
-	_ = s.userCollection.FindOne(s.ctx, models.UserModel{Username: Username}).Decode(&user)
+	_ = s.userCollection.FindOne(s.ctx, models.UserModel{Username: username}).Decode(&user)
 	return user,nil
 }
