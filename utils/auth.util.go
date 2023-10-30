@@ -12,4 +12,3 @@ func CheckPassword(password, hashedPassword string) bool {
 	return err == nil
 }
 
-func generateJwtToken(){}
