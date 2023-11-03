@@ -10,8 +10,7 @@ import (
 
 func UserRoutes(incommingRoutes *gin.RouterGroup){	
 	userGroup:= incommingRoutes.Group("/user")
-	incommingRoutes.Use(middleware.AuthenticateRoute)
-
+	userGroup.Use(middleware.AuthenticateRoute)
 	userGroup.GET("/users",controllers.GetUsers)
 	userGroup.GET("/user/:id",controllers.GetUserById)
 	
